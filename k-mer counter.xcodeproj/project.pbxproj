@@ -14,6 +14,8 @@
 		65E2921C1CA6E2C4005A6118 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E2920B1CA6C316005A6118 /* buffer.cpp */; };
 		65E2921D1CA6E2C4005A6118 /* buffer_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E2920E1CA6E196005A6118 /* buffer_test.cpp */; };
 		65E292211CA72E60005A6118 /* trie_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E292201CA72E60005A6118 /* trie_test.cpp */; };
+		65E292231CA94A6F005A6118 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 65E292221CA94A6F005A6118 /* Makefile */; };
+		65E292251CA94E70005A6118 /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E292241CA94E70005A6118 /* test.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,6 +50,8 @@
 		65E292141CA6E239005A6118 /* kmer_counter_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = kmer_counter_test; sourceTree = BUILT_PRODUCTS_DIR; };
 		65E2921F1CA6E3CD005A6118 /* catch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = catch.hpp; sourceTree = "<group>"; };
 		65E292201CA72E60005A6118 /* trie_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trie_test.cpp; sourceTree = "<group>"; };
+		65E292221CA94A6F005A6118 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		65E292241CA94E70005A6118 /* test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +92,7 @@
 		65E292001CA342A1005A6118 /* k-mer counter */ = {
 			isa = PBXGroup;
 			children = (
+				65E292221CA94A6F005A6118 /* Makefile */,
 				65E2921F1CA6E3CD005A6118 /* catch.hpp */,
 				65E292011CA342A1005A6118 /* main.cpp */,
 				65E292081CA342E9005A6118 /* trie.cpp */,
@@ -96,6 +101,7 @@
 				65E2920B1CA6C316005A6118 /* buffer.cpp */,
 				65E2920C1CA6C316005A6118 /* buffer.hpp */,
 				65E2920E1CA6E196005A6118 /* buffer_test.cpp */,
+				65E292241CA94E70005A6118 /* test.cpp */,
 			);
 			path = "k-mer counter";
 			sourceTree = "<group>";
@@ -179,6 +185,7 @@
 			files = (
 				65E2920D1CA6C316005A6118 /* buffer.cpp in Sources */,
 				65E292021CA342A1005A6118 /* main.cpp in Sources */,
+				65E292231CA94A6F005A6118 /* Makefile in Sources */,
 				65E2920A1CA342E9005A6118 /* trie.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -190,6 +197,7 @@
 				65E2921B1CA6E2C4005A6118 /* trie.cpp in Sources */,
 				65E292211CA72E60005A6118 /* trie_test.cpp in Sources */,
 				65E2921C1CA6E2C4005A6118 /* buffer.cpp in Sources */,
+				65E292251CA94E70005A6118 /* test.cpp in Sources */,
 				65E2921D1CA6E2C4005A6118 /* buffer_test.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

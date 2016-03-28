@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/daniel/Documents/repos/k-mer\ counter/big.txt"
+            argument = "/Users/daniel/Documents/repos/k-mer\ counter/test.txt"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
