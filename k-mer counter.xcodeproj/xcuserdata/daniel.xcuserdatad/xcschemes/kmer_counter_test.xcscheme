@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "65E291FD1CA342A1005A6118"
-               BuildableName = "k-mer counter"
-               BlueprintName = "k-mer counter"
+               BlueprintIdentifier = "65E292131CA6E239005A6118"
+               BuildableName = "kmer_counter_test"
+               BlueprintName = "kmer_counter_test"
                ReferencedContainer = "container:k-mer counter.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "65E291FD1CA342A1005A6118"
-            BuildableName = "k-mer counter"
-            BlueprintName = "k-mer counter"
+            BlueprintIdentifier = "65E292131CA6E239005A6118"
+            BuildableName = "kmer_counter_test"
+            BlueprintName = "kmer_counter_test"
             ReferencedContainer = "container:k-mer counter.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -42,7 +42,7 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -55,26 +55,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "65E291FD1CA342A1005A6118"
-            BuildableName = "k-mer counter"
-            BlueprintName = "k-mer counter"
+            BlueprintIdentifier = "65E292131CA6E239005A6118"
+            BuildableName = "kmer_counter_test"
+            BlueprintName = "kmer_counter_test"
             ReferencedContainer = "container:k-mer counter.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "/Users/daniel/Documents/repos/k-mer\ counter/big.txt"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "5"
-            isEnabled = "YES">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -88,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "65E291FD1CA342A1005A6118"
-            BuildableName = "k-mer counter"
-            BlueprintName = "k-mer counter"
+            BlueprintIdentifier = "65E292131CA6E239005A6118"
+            BuildableName = "kmer_counter_test"
+            BlueprintName = "kmer_counter_test"
             ReferencedContainer = "container:k-mer counter.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
