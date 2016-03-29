@@ -14,7 +14,6 @@
 		65E2921C1CA6E2C4005A6118 /* buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E2920B1CA6C316005A6118 /* buffer.cpp */; };
 		65E2921D1CA6E2C4005A6118 /* buffer_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E2920E1CA6E196005A6118 /* buffer_test.cpp */; };
 		65E292211CA72E60005A6118 /* trie_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E292201CA72E60005A6118 /* trie_test.cpp */; };
-		65E292231CA94A6F005A6118 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 65E292221CA94A6F005A6118 /* Makefile */; };
 		65E292251CA94E70005A6118 /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E292241CA94E70005A6118 /* test.cpp */; };
 /* End PBXBuildFile section */
 
@@ -185,7 +184,6 @@
 			files = (
 				65E2920D1CA6C316005A6118 /* buffer.cpp in Sources */,
 				65E292021CA342A1005A6118 /* main.cpp in Sources */,
-				65E292231CA94A6F005A6118 /* Makefile in Sources */,
 				65E2920A1CA342E9005A6118 /* trie.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

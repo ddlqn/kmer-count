@@ -16,6 +16,7 @@
 #include <set>
 #include <boost/circular_buffer.hpp>
 #include "buffer.hpp"
+#include <mutex>
 
 struct KmerResultCompare;
 
@@ -29,6 +30,7 @@ public:
   void InsertKmer(CircularBufferIterator begin, CircularBufferIterator end);
   void InsertKmer(boost::circular_buffer<char>::iterator begin,
                   boost::circular_buffer<char>::iterator end);
+  void InsertKmer(const char * buf, long k, int pos = 0);
   std::set<KmerResult, KmerResultCompare> GetTopKmers(long long int n, long k);
   std::set<KmerResult, KmerResultCompare> GetAllKmers(long k);
 private:
@@ -36,6 +38,7 @@ private:
 
   // instance variables
   int count;
+  std::mutex lock;
   ChildArray children;
   
   // private methods
