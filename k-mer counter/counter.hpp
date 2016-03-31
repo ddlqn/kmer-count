@@ -17,14 +17,16 @@
 
 
 class KmerCounter {
-  KmerResultSet result_set;
+  const long buffer_size = 1000000;
+  char * buffer;
   std::ifstream in_file;
+  KmerResultSet result_set;
 
   void FillKmerTrie(unsigned long k, KmerTrie &trie);
-  int FillKmerTrieFromBuffer(char * buffer, long k, long start, long end, KmerTrie &trie);
   void ComputeTopKmersUsingTrie(unsigned long n, unsigned long k);
   void ComputeTopKmersUsingFiles(unsigned long n, unsigned long k);
-  
+  void FillBuffer(long offset);
+  void WriteKmersToTempFiles(unsigned long k);
 public:
   KmerCounter() {}
   KmerCounter(std::string file_name);

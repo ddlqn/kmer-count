@@ -17,16 +17,20 @@ KmerCounter::KmerCounter(std::string file_name) {
   if (!in_file.good()) {
     throw "could not open input file "+file_name;
   }
+
+  buffer = new char[buffer_size];
 }
 
 KmerCounter::~KmerCounter() {
   if (in_file.is_open()) {
     in_file.close();
   }
+  delete [] buffer;
 }
 
 KmerResultSet KmerCounter::GetTopKmers(unsigned long top_N, unsigned long k) {
-  if (k < 13) {
+  if (k <= 10) {
+//  if (true) {
     ComputeTopKmersUsingTrie(top_N, k);
   } else {
     ComputeTopKmersUsingFiles(top_N, k);
@@ -42,9 +46,6 @@ void KmerCounter::ComputeTopKmersUsingTrie(unsigned long top_N,
 }
 
 void KmerCounter::FillKmerTrie(unsigned long k, KmerTrie &trie) {
-  const long buffer_size = 1000000;
-  
-  char * buffer = new char[buffer_size];
   
   in_file.read(buffer, buffer_size);
   if (in_file.gcount() < k) {
@@ -56,11 +57,12 @@ void KmerCounter::FillKmerTrie(unsigned long k, KmerTrie &trie) {
     if (buffer[end+k-2] == '\n') {
       --end;
     }
-    FillKmerTrieFromBuffer(buffer, k, 0, end, trie);
-    if (in_file.gcount() == buffer_size) {
-      in_file.seekg(-(k-1), std::ios_base::cur);
+
+    for (long i = 0; i < end; ++i) {
+      trie.InsertKmer(buffer+i, k);
     }
-    in_file.read(buffer, buffer_size);
+    
+    FillBuffer(-(k-1));
     i += buffer_size;
     if (!(i%10000000)) {
       std::cerr << "." << std::flush;
@@ -69,29 +71,73 @@ void KmerCounter::FillKmerTrie(unsigned long k, KmerTrie &trie) {
   std::cerr << std::endl;
 }
 
-int KmerCounter::FillKmerTrieFromBuffer(char * buffer, long k, long start,
-                                        long end, KmerTrie &trie) {
-  for (long i = start; i < end; ++i) {
-    trie.InsertKmer(buffer+i, k);
+
+inline void KmerCounter::FillBuffer(long offset) {
+  if (in_file.gcount() == buffer_size) {
+    in_file.seekg(offset, std::ios_base::cur);
   }
-  return 0;
+  in_file.read(buffer, buffer_size);
 }
 
 void KmerCounter::ComputeTopKmersUsingFiles(unsigned long n, unsigned long k) {
-  std::fstream tmp_files[25];
+  
+  WriteKmersToTempFiles(k);
+  
+  std::ifstream tmp_file;
+  unsigned long long read = 0;
+  for (int fi = 0; fi < 25; ++fi) {
+    std::cerr << "reading file " << fi << " ";
+    tmp_file.open("tmp"+std::to_string(fi),
+                       std::fstream::in | std::fstream::binary);
+    
+    std::vector<unsigned long long> kmers;
+    unsigned long long hash;
+    while (tmp_file.read((char *)&hash, sizeof(unsigned long long))) {
+      kmers.push_back(hash);
+      
+      ++read;
+      if (!(read%10000000)) {
+        std::cerr << "*" << std::flush;
+      }
+    }
+    std::cerr << '\r';
+    std::sort(kmers.begin(), kmers.end());
+    
+    for (auto lb = kmers.begin(), ub = kmers.begin(); lb != kmers.end();
+         lb = ub) {
+      ub = std::upper_bound(lb, kmers.end(), *lb);
+      KmerResult kmer_result(ComputeKmerFromHash(fi,2)
+                             +ComputeKmerFromHash(*lb, k-2),
+                             ub-lb);
+      
+      if (result_set.size() < n) {
+        result_set.insert(kmer_result);
+      } else if (kmer_result > *(result_set.rbegin())) {
+        result_set.erase(*(result_set.rbegin()));
+        result_set.insert(kmer_result);
+      }
+    }
+    
+    tmp_file.close();
+    std::remove(("tmp"+std::to_string(fi)).c_str());
+  }
+  
+}
+
+void KmerCounter::WriteKmersToTempFiles(unsigned long k) {
+
+  std::ofstream tmp_files[25];
   for (int i = 0; i < 25; ++i) {
     tmp_files[i].open("tmp"+std::to_string(i),
                       std::ofstream::out | std::ofstream::binary);
   }
-  
-  const long buffer_size = 1000000;
-  char * buffer = new char[buffer_size];
   
   in_file.read(buffer, buffer_size);
   
   if (in_file.gcount() < k) {
     throw "input shorter than k-mer length ("+std::to_string(k)+").";
   }
+  
   unsigned long long i = buffer_size;
   while (in_file.gcount() > 0) {
     long end = in_file.gcount()-k+1;
@@ -105,10 +151,7 @@ void KmerCounter::ComputeTopKmersUsingFiles(unsigned long n, unsigned long k) {
                                                sizeof(unsigned long long));
     }
     
-    if (in_file.gcount() == buffer_size) {
-      in_file.seekg(-(k-1), std::ios_base::cur);
-    }
-    in_file.read(buffer, buffer_size);
+    FillBuffer(-(k-1));
     i += buffer_size;
     if (!(i%10000000)) {
       std::cerr << "." << std::flush;
@@ -119,45 +162,7 @@ void KmerCounter::ComputeTopKmersUsingFiles(unsigned long n, unsigned long k) {
   for (int i = 0; i < 25; ++i) {
     tmp_files[i].close();
   }
-  
-  unsigned long long read = 0;
-  for (int fi = 0; fi < 25; ++fi) {
-    std::cerr << "reading file " << fi << " ";
-    tmp_files[fi].open("tmp"+std::to_string(fi),
-                       std::fstream::in | std::fstream::binary);
-    
-    std::vector<unsigned long long> kmers;
-    unsigned long long hash;
-    while (tmp_files[fi].read((char *)&hash, sizeof(unsigned long long))) {
-      kmers.push_back(hash);
-      
-      ++read;
-      if (!(read%10000000)) {
-        std::cerr << "*" << std::flush;
-      }
-    }
-    std::cerr << '\r';
-    std::sort(kmers.begin(), kmers.end());
-    
-    for (auto lower_bound = kmers.begin(), upper_bound = kmers.begin();
-         lower_bound != kmers.end(); lower_bound = upper_bound) {
-      upper_bound = std::upper_bound(lower_bound, kmers.end(), *lower_bound);
-      KmerResult kmer_result(ComputeKmerFromHash(fi,2)
-                             +ComputeKmerFromHash(*lower_bound, k-2),
-                             upper_bound-lower_bound);
-      
-      if (result_set.size() < n) {
-        result_set.insert(kmer_result);
-      } else if (kmer_result > *(result_set.rbegin())) {
-        result_set.erase(*(result_set.rbegin()));
-        result_set.insert(kmer_result);
-      }
-    }
-    
-    tmp_files[fi].close();
-    std::remove(("tmp"+std::to_string(fi)).c_str());
-  }
-  
+
 }
 
 void KmerCounter::reset() {
