@@ -26,7 +26,7 @@ struct KmerResultCompare;
 
 class KmerTrie {
 public:
-  typedef std::tuple<std::string, unsigned int> KmerResult;
+  typedef std::tuple<std::string, unsigned long long> KmerResult;
   typedef std::set<KmerResult, KmerResultCompare> KmerResultSet;
   
   KmerTrie();

@@ -50,36 +50,12 @@ int main(int argc, const char * argv[]) {
     
       std::cerr << "using custom class: " << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
       std::cerr << "The trie contains the following 5-mers:" << std::endl;
-//      auto foo = trie.GetTopKmers(topN,k);
-      auto foo = trie.GetAllKmers(k);
+      auto foo = trie.GetTopKmers(topN,k);
+//      auto foo = trie.GetAllKmers(k);
       for (auto &it : foo) {
         std::cout << std::get<0>(it) << "," << std::get<1>(it) << std::endl;
       }
-  } else {
-//
-//  in_file.open(argv[1]);
-//  std::map<long long, long long> kmer_map;
-//  auto start = std::chrono::steady_clock::now();
-//  if(FillHashTable(in_file, kmer_map, k)) {
-//    in_file.close();
-//    return -1;
-//  }
-//  
-//  in_file.close();
-//  
-//  auto end = std::chrono::steady_clock::now();
-//  auto diff = end - start;
-//
-//  std::cerr << "using hash map: " << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
-//  std::cerr << "The trie contains the following 5-mers:" << std::endl;
-//    auto foo = GetTopKmersFromMap(kmer_map, k, topN);
-////  foo = GetTopKmersFromMap(kmer_map, k, LLONG_MAX);
-//  for (auto &it : foo) {
-//    std::cout << std::get<0>(it) << "," << std::get<1>(it) << std::endl;
-//  }
-//  
-//  in_file.open(argv[1]);
-  
+  } else {  
     auto start = std::chrono::steady_clock::now();
     //  KmerTrie::KmerResultSet result_set = GetTopKmersFromFile(in_file, LONG_MAX, k);
     KmerTrie::KmerResultSet result_set = GetTopKmersFromFile(in_file, topN, k);
