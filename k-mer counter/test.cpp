@@ -2,7 +2,8 @@
 //  test.cpp
 //  k-mer counter
 //
-//  Created by Daniel Dalquen on 28/03/2016.
+//  This file just contains the main function macro for Catch.
+//
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
 

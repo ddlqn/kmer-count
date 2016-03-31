@@ -67,16 +67,12 @@ KmerTrie::~KmerTrie() {
 
 void KmerTrie::InsertKmer(const std::string &kmer, int pos) {
   if (kmer.length() == pos) {
-    lock.lock();
     count += 1;
-    lock.unlock();
   } else {
     int curIndex = BaseToIndex(kmer[pos]);
-    lock.lock();
     if (!children[curIndex]) {
       children[curIndex] = new KmerTrie();
     }
-    lock.unlock();
     children[curIndex]->InsertKmer(kmer, ++pos);
   }
 }
@@ -84,16 +80,12 @@ void KmerTrie::InsertKmer(const std::string &kmer, int pos) {
 void KmerTrie::InsertKmer(CircularBufferIterator begin,
                           CircularBufferIterator end) {
   if (begin == end) {
-    lock.lock();
     count += 1;
-    lock.unlock();
   } else {
     int curIndex = BaseToIndex(*begin);
-    lock.lock();
     if (!children[curIndex]) {
       children[curIndex] = new KmerTrie();
     }
-    lock.unlock();
     children[curIndex]->InsertKmer(++begin, end);
   }
 }
@@ -101,55 +93,46 @@ void KmerTrie::InsertKmer(CircularBufferIterator begin,
 void KmerTrie::InsertKmer(boost::circular_buffer<char>::iterator begin,
                           boost::circular_buffer<char>::iterator end) {
   if (begin == end) {
-    lock.lock();
     count += 1;
-    lock.unlock();
   } else {
     int curIndex = BaseToIndex(*begin);
-    lock.lock();
     if (!children[curIndex]) {
       children[curIndex] = new KmerTrie();
     }
-    lock.unlock();
     children[curIndex]->InsertKmer(++begin, end);
   }
 }
 
 void KmerTrie::InsertKmer(const char * buf, long k, int pos) {
   if (pos == k) {
-    lock.lock();
     count += 1;
-    lock.unlock();
   } else {
     int curIndex = BaseToIndex(*(buf+pos));
-    lock.lock();
     if (!children[curIndex]) {
       children[curIndex] = new KmerTrie();
     }
-    lock.unlock();
     children[curIndex]->InsertKmer(buf, k, ++pos);
   }
 }
 
-std::set<KmerTrie::KmerResult, KmerResultCompare> KmerTrie::GetTopKmers(long long int n, long k) {
-  std::set<KmerResult, KmerResultCompare> result_set;
+KmerTrie::KmerResultSet KmerTrie::GetTopKmers(long long int n, long k) {
+  KmerResultSet result_set;
   std::string prefix;
   GetTopKmers(n, k, result_set, prefix);
   return result_set;
 }
 
-std::set<KmerTrie::KmerResult, KmerResultCompare> KmerTrie::GetAllKmers(long k) {
-  std::set<KmerResult, KmerResultCompare> result_set;
+KmerTrie::KmerResultSet KmerTrie::GetAllKmers(long k) {
+  KmerResultSet result_set;
   std::string prefix;
   GetTopKmers(LLONG_MAX, k, result_set, prefix);
   return result_set;
 }
 
 void KmerTrie::GetTopKmers(long long int n, long k,
-                           std::set<KmerResult, KmerResultCompare> &result_set,
+                           KmerResultSet &result_set,
                            std::string &prefix) {
   if (prefix.length() == k) {
-//    std::cout << prefix << std::endl;
     KmerResult r(prefix, count);
     if (result_set.size() < n) {
       result_set.insert(r);

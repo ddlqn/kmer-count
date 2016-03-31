@@ -1,5 +1,6 @@
 CC = g++
-CFLAGS = -O3 -std=c++11 -Wall -L/usr/local/lib -I/usr/local/include
+CFLAGS = -O3 -std=c++11 -Wall -I/usr/local/include
+LFLAGS = -std=c++11 -Wall -L/usr/local/lib
 TESTFLAGS = $(CFLAGS)
 
 CPP = $(filter-out main.cpp, $(filter-out test.cpp, $(filter-out $(TSTSRC), $(wildcard *.cpp))))
@@ -11,7 +12,7 @@ TSTOBJ = $(TSTSRC:.cpp=.o)
 HDR = $(filter-out catch.hpp, $(wildcard *.h))
 
 count: $(OBJ) main.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(LFLAGS) -o $@ $^
 
 test: $(OBJ) $(TSTOBJ) test.o
 	$(CC) $(TESTFLAGS) -o $@ $^
