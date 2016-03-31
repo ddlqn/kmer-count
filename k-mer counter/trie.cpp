@@ -11,45 +11,6 @@
 #include <iostream>
 
 
-int KmerTrie::BaseToIndex(char c) {
-  switch (c) {
-    case 'A':
-    case 'a':
-      return 0;
-    case 'C':
-    case 'c':
-      return 1;
-    case 'G':
-    case 'g':
-      return 2;
-    case 'T':
-    case 't':
-      return 3;
-    case 'N':
-    case 'n':
-      return 4;
-    default:
-      throw "unexpected character in sequence!";
-  }
-}
-
-char KmerTrie::IndexToBase(int i) {
-  switch (i) {
-    case 0:
-      return 'A';
-    case 1:
-      return 'C';
-    case 2:
-      return 'G';
-    case 3:
-      return 'T';
-    case 4:
-      return 'N';
-    default:
-      throw "invalid index";
-  }
-}
-
 KmerTrie::KmerTrie() {
   count = 0;
   for (auto &it : children) {
@@ -77,31 +38,6 @@ void KmerTrie::InsertKmer(const std::string &kmer, int pos) {
   }
 }
 
-//void KmerTrie::InsertKmer(CircularBufferIterator begin,
-//                          CircularBufferIterator end) {
-//  if (begin == end) {
-//    count += 1;
-//  } else {
-//    int curIndex = BaseToIndex(*begin);
-//    if (!children[curIndex]) {
-//      children[curIndex] = new KmerTrie();
-//    }
-//    children[curIndex]->InsertKmer(++begin, end);
-//  }
-//}
-
-//void KmerTrie::InsertKmer(boost::circular_buffer<char>::iterator begin,
-//                          boost::circular_buffer<char>::iterator end) {
-//  if (begin == end) {
-//    count += 1;
-//  } else {
-//    int curIndex = BaseToIndex(*begin);
-//    if (!children[curIndex]) {
-//      children[curIndex] = new KmerTrie();
-//    }
-//    children[curIndex]->InsertKmer(++begin, end);
-//  }
-//}
 
 void KmerTrie::InsertKmer(const char * buf, long k, int pos) {
   if (pos == k) {
@@ -115,14 +51,14 @@ void KmerTrie::InsertKmer(const char * buf, long k, int pos) {
   }
 }
 
-KmerTrie::KmerResultSet KmerTrie::GetTopKmers(long long int n, long k) {
+KmerResultSet KmerTrie::GetTopKmers(long long int n, long k) {
   KmerResultSet result_set;
   std::string prefix;
   GetTopKmers(n, k, result_set, prefix);
   return result_set;
 }
 
-KmerTrie::KmerResultSet KmerTrie::GetAllKmers(long k) {
+KmerResultSet KmerTrie::GetAllKmers(long k) {
   KmerResultSet result_set;
   std::string prefix;
   GetTopKmers(LLONG_MAX, k, result_set, prefix);
@@ -151,10 +87,4 @@ void KmerTrie::GetTopKmers(long long int n, long k,
     }
   }
 }
-
-bool operator>(const KmerTrie::KmerResult& r1, const KmerTrie::KmerResult& r2) {
-  return std::get<1>(r1) > std::get<1>(r2) ||
-  (std::get<1>(r1) == std::get<1>(r2) && std::get<0>(r1) < std::get<0>(r2));
-}
-
 
