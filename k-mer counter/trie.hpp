@@ -18,7 +18,7 @@
 #include <string>
 #include <tuple>
 #include <set>
-#include <boost/circular_buffer.hpp>
+//#include <boost/circular_buffer.hpp>
 #include "buffer.hpp"
 #include <mutex>
 
@@ -32,9 +32,9 @@ public:
   KmerTrie();
   ~KmerTrie();
   void InsertKmer(const std::string &kmer, int pos = 0);
-  void InsertKmer(CircularBufferIterator begin, CircularBufferIterator end);
-  void InsertKmer(boost::circular_buffer<char>::iterator begin,
-                  boost::circular_buffer<char>::iterator end);
+//  void InsertKmer(CircularBufferIterator begin, CircularBufferIterator end);
+//  void InsertKmer(boost::circular_buffer<char>::iterator begin,
+//                  boost::circular_buffer<char>::iterator end);
   void InsertKmer(const char * buf, long k, int pos = 0);
   KmerResultSet GetTopKmers(long long int n, long k);
   KmerResultSet GetAllKmers(long k);

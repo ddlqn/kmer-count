@@ -77,31 +77,31 @@ void KmerTrie::InsertKmer(const std::string &kmer, int pos) {
   }
 }
 
-void KmerTrie::InsertKmer(CircularBufferIterator begin,
-                          CircularBufferIterator end) {
-  if (begin == end) {
-    count += 1;
-  } else {
-    int curIndex = BaseToIndex(*begin);
-    if (!children[curIndex]) {
-      children[curIndex] = new KmerTrie();
-    }
-    children[curIndex]->InsertKmer(++begin, end);
-  }
-}
+//void KmerTrie::InsertKmer(CircularBufferIterator begin,
+//                          CircularBufferIterator end) {
+//  if (begin == end) {
+//    count += 1;
+//  } else {
+//    int curIndex = BaseToIndex(*begin);
+//    if (!children[curIndex]) {
+//      children[curIndex] = new KmerTrie();
+//    }
+//    children[curIndex]->InsertKmer(++begin, end);
+//  }
+//}
 
-void KmerTrie::InsertKmer(boost::circular_buffer<char>::iterator begin,
-                          boost::circular_buffer<char>::iterator end) {
-  if (begin == end) {
-    count += 1;
-  } else {
-    int curIndex = BaseToIndex(*begin);
-    if (!children[curIndex]) {
-      children[curIndex] = new KmerTrie();
-    }
-    children[curIndex]->InsertKmer(++begin, end);
-  }
-}
+//void KmerTrie::InsertKmer(boost::circular_buffer<char>::iterator begin,
+//                          boost::circular_buffer<char>::iterator end) {
+//  if (begin == end) {
+//    count += 1;
+//  } else {
+//    int curIndex = BaseToIndex(*begin);
+//    if (!children[curIndex]) {
+//      children[curIndex] = new KmerTrie();
+//    }
+//    children[curIndex]->InsertKmer(++begin, end);
+//  }
+//}
 
 void KmerTrie::InsertKmer(const char * buf, long k, int pos) {
   if (pos == k) {

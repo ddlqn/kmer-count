@@ -12,55 +12,55 @@
 #include <vector>
 #include "util.hpp"
 
-int FillKmerTrie(std::ifstream &in_file, long k, KmerTrie &trie) {
-  CircularBuffer buffer((unsigned int)k);
-  
-  int i = 0;
-  char base;
-  while (i < k-1 && (in_file >> base)) {
-    buffer.push_back(base);
-    ++i;
-  }
-  if (!in_file || in_file.peek() == EOF) {
-    std::cout << "input shorter than k-mer length (" << k << ")." << std::endl;
-    return -1;
-  }
-  while (in_file >> base) {
-    buffer.push_back(base);
-    trie.InsertKmer(buffer.begin(), buffer.end());
-    ++i;
-    if (!(i%10000000)) {
-      std::cerr << "." << std::flush;
-    }
-  }
-  std::cerr << std::endl;
-  return 0;
-}
+//int FillKmerTrie(std::ifstream &in_file, long k, KmerTrie &trie) {
+//  CircularBuffer buffer((unsigned int)k);
+//  
+//  int i = 0;
+//  char base;
+//  while (i < k-1 && (in_file >> base)) {
+//    buffer.push_back(base);
+//    ++i;
+//  }
+//  if (!in_file || in_file.peek() == EOF) {
+//    std::cout << "input shorter than k-mer length (" << k << ")." << std::endl;
+//    return -1;
+//  }
+//  while (in_file >> base) {
+//    buffer.push_back(base);
+//    trie.InsertKmer(buffer.begin(), buffer.end());
+//    ++i;
+//    if (!(i%10000000)) {
+//      std::cerr << "." << std::flush;
+//    }
+//  }
+//  std::cerr << std::endl;
+//  return 0;
+//}
 
-int FillKmerTrie_boost(std::ifstream &in_file, long k, KmerTrie &trie) {
-  boost::circular_buffer<char> buffer((unsigned int)k);
-  
-  unsigned long long i = 0;
-  char base;
-  while (i < k-1 && (in_file >> base)) {
-    buffer.push_back(base);
-    i++;
-  }
-  if (!in_file || in_file.peek() == EOF) {
-    std::cout << "input shorter than k-mer length (" << k << ")." << std::endl;
-    return -1;
-  }
-  while (in_file >> base) {
-    buffer.push_back(base);
-    trie.InsertKmer(buffer.begin(), buffer.end());
-    ++i;
-    if (!(i%10000000)) {
-      std::cerr << "." << std::flush;
-    }
-  }
-  std::cerr << std::endl;
-  return 0;
-}
+//int FillKmerTrie_boost(std::ifstream &in_file, long k, KmerTrie &trie) {
+//  boost::circular_buffer<char> buffer((unsigned int)k);
+//  
+//  unsigned long long i = 0;
+//  char base;
+//  while (i < k-1 && (in_file >> base)) {
+//    buffer.push_back(base);
+//    i++;
+//  }
+//  if (!in_file || in_file.peek() == EOF) {
+//    std::cout << "input shorter than k-mer length (" << k << ")." << std::endl;
+//    return -1;
+//  }
+//  while (in_file >> base) {
+//    buffer.push_back(base);
+//    trie.InsertKmer(buffer.begin(), buffer.end());
+//    ++i;
+//    if (!(i%10000000)) {
+//      std::cerr << "." << std::flush;
+//    }
+//  }
+//  std::cerr << std::endl;
+//  return 0;
+//}
 
 int FillKmerTrie_parallel(std::ifstream &in_file, long k, KmerTrie &trie) {
   const long buffer_size = 1000000;
@@ -99,44 +99,44 @@ int FillKmerTrieFromBuffer(char * buffer, long k, long start, long end, KmerTrie
   return 0;
 }
 
-int FillHashTable(std::ifstream &in_file, std::map<unsigned long long, unsigned long long> &kmer_map, long k) {
-  const long buffer_size = 1000000;
-  char * buffer = new char[buffer_size];
-  
-  in_file.read(buffer, buffer_size);
-
-  if (in_file.gcount() < k) {
-    std::cout << "input shorter than k-mer length (" << k << ")." << std::endl;
-    return -1;
-  }
-  unsigned long long i = buffer_size;
-  while (in_file.gcount() > 0) {
-    long end = in_file.gcount()-k+1;
-    if (buffer[end+k-2] == '\n') {
-      --end;
-    }
-    
-    for (long i = 0; i < end; ++i) {
-      unsigned long long hash = ComputeHash(buffer+i, k);
-      try {
-        kmer_map.at(hash) += 1;
-      } catch (const std::out_of_range &oor) {
-        kmer_map[hash] = 1;
-      }
-    }
-
-    if (in_file.gcount() == buffer_size) {
-      in_file.seekg(-(k-1), std::ios_base::cur);
-    }
-    in_file.read(buffer, buffer_size);
-    i += buffer_size;
-    if (!(i%10000000)) {
-      std::cerr << "." << std::flush;
-    }
-  }
-  std::cerr << std::endl;
-  return 0;
-}
+//int FillHashTable(std::ifstream &in_file, std::map<unsigned long long, unsigned long long> &kmer_map, long k) {
+//  const long buffer_size = 1000000;
+//  char * buffer = new char[buffer_size];
+//  
+//  in_file.read(buffer, buffer_size);
+//
+//  if (in_file.gcount() < k) {
+//    std::cout << "input shorter than k-mer length (" << k << ")." << std::endl;
+//    return -1;
+//  }
+//  unsigned long long i = buffer_size;
+//  while (in_file.gcount() > 0) {
+//    long end = in_file.gcount()-k+1;
+//    if (buffer[end+k-2] == '\n') {
+//      --end;
+//    }
+//    
+//    for (long i = 0; i < end; ++i) {
+//      unsigned long long hash = ComputeHash(buffer+i, k);
+//      try {
+//        kmer_map.at(hash) += 1;
+//      } catch (const std::out_of_range &oor) {
+//        kmer_map[hash] = 1;
+//      }
+//    }
+//
+//    if (in_file.gcount() == buffer_size) {
+//      in_file.seekg(-(k-1), std::ios_base::cur);
+//    }
+//    in_file.read(buffer, buffer_size);
+//    i += buffer_size;
+//    if (!(i%10000000)) {
+//      std::cerr << "." << std::flush;
+//    }
+//  }
+//  std::cerr << std::endl;
+//  return 0;
+//}
 
 unsigned long long ComputeHash(char * kmer, long k) {
   unsigned long long hash = 0;
@@ -197,21 +197,21 @@ char IndexToBase(int i) {
 }
 
 
-KmerTrie::KmerResultSet GetTopKmersFromMap(std::map<unsigned long long, unsigned long long> &kmer_map, long k, unsigned long long n) {
-  KmerTrie::KmerResultSet result_set;
-  
-  for (auto &it: kmer_map) {
-    KmerTrie::KmerResult r(ComputeKmerFromHash(it.first, k), (unsigned long long)it.second);
-    if (result_set.size() < n) {
-      result_set.insert(r);
-    } else if (r > *(result_set.rbegin())) {
-      result_set.erase(*(result_set.rbegin()));
-      result_set.insert(r);
-    }
-  }
-  
-  return result_set;
-}
+//KmerTrie::KmerResultSet GetTopKmersFromMap(std::map<unsigned long long, unsigned long long> &kmer_map, long k, unsigned long long n) {
+//  KmerTrie::KmerResultSet result_set;
+//  
+//  for (auto &it: kmer_map) {
+//    KmerTrie::KmerResult r(ComputeKmerFromHash(it.first, k), (unsigned long long)it.second);
+//    if (result_set.size() < n) {
+//      result_set.insert(r);
+//    } else if (r > *(result_set.rbegin())) {
+//      result_set.erase(*(result_set.rbegin()));
+//      result_set.insert(r);
+//    }
+//  }
+//  
+//  return result_set;
+//}
 
 KmerTrie::KmerResultSet GetTopKmersFromFile(std::ifstream &in_file, long n, long k) {
   std::fstream tmp_files[25];
@@ -289,7 +289,7 @@ KmerTrie::KmerResultSet GetTopKmersFromFile(std::ifstream &in_file, long n, long
         std::cerr << "*" << std::flush;
       }
     }
-    std::cerr << '\r'; //std::endl;
+    std::cerr << '\r';
     std::sort(kmers.begin(), kmers.end());
 
     for (auto lb = kmers.begin(), ub = kmers.begin(); lb != kmers.end(); lb = ub) {
