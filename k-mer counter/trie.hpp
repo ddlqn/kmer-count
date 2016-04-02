@@ -5,7 +5,8 @@
 //  Trie data structure to store and count k-mers. Each node has a counter (only
 //  used in the leaves) and pointers to the child nodes, each representing one
 //  letter of the alphabet (A, C, G, T, N). Child nodes are allocated when a new
-//  k-mer is inserted that requires them.
+//  k-mer is inserted that requires them. This data structure is only used if
+//  the number of possible k-mers can fit into memory (k <= 10).
 //
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
@@ -16,29 +17,23 @@
 #include <stdio.h>
 #include <array>
 #include <string>
-#include <tuple>
 #include <set>
 #include "buffer.hpp"
 #include "util.hpp"
 
 class KmerTrie {
 public:
-  
   KmerTrie();
   ~KmerTrie();
   void InsertKmer(const std::string &kmer, int pos = 0);
-  void InsertKmer(const char * buf, long k, int pos = 0);
-  KmerResultSet GetTopKmers(long long int n, long k);
-  KmerResultSet GetAllKmers(long k);
+  void InsertKmer(const char * buf, int k, int pos = 0);
+  KmerResultSet GetTopKmers(unsigned int n, int k);
+  KmerResultSet GetAllKmers(int k);
 private:
-  typedef std::array<KmerTrie *,5> ChildArray;
-
-  // instance variables
   int count;
-  ChildArray children;
+  std::array<KmerTrie *,5> children;
   
-  // private methods
-  void GetTopKmers(long long int n, long k, KmerResultSet &result_set,
+  void GetTopKmers(long long int n, int k, KmerResultSet &result_set,
                    std::string &prefix);
 };
 

@@ -2,7 +2,7 @@
 //  test.cpp
 //  k-mer counter
 //
-//  This file just contains the main function macro for Catch.
+//  This file just contains the main function macro for the Catch framework.
 //
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //

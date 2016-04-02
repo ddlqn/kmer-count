@@ -2,7 +2,6 @@
 //  trie.cpp
 //  k-mer counter
 //
-//  Created by Daniel Dalquen on 23/03/2016.
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
 
@@ -26,6 +25,7 @@ KmerTrie::~KmerTrie() {
   }
 }
 
+
 void KmerTrie::InsertKmer(const std::string &kmer, int pos) {
   if (kmer.length() == pos) {
     count += 1;
@@ -39,7 +39,7 @@ void KmerTrie::InsertKmer(const std::string &kmer, int pos) {
 }
 
 
-void KmerTrie::InsertKmer(const char * buf, long k, int pos) {
+void KmerTrie::InsertKmer(const char * buf, int k, int pos) {
   if (pos == k) {
     count += 1;
   } else {
@@ -51,21 +51,21 @@ void KmerTrie::InsertKmer(const char * buf, long k, int pos) {
   }
 }
 
-KmerResultSet KmerTrie::GetTopKmers(long long int n, long k) {
+KmerResultSet KmerTrie::GetTopKmers(unsigned int n, int k) {
   KmerResultSet result_set;
   std::string prefix;
   GetTopKmers(n, k, result_set, prefix);
   return result_set;
 }
 
-KmerResultSet KmerTrie::GetAllKmers(long k) {
+KmerResultSet KmerTrie::GetAllKmers(int k) {
   KmerResultSet result_set;
   std::string prefix;
   GetTopKmers(LLONG_MAX, k, result_set, prefix);
   return result_set;
 }
 
-void KmerTrie::GetTopKmers(long long int n, long k,
+void KmerTrie::GetTopKmers(long long int n, int k,
                            KmerResultSet &result_set,
                            std::string &prefix) {
   if (prefix.length() == k) {

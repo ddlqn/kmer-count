@@ -2,7 +2,15 @@
 //  KmerCounter.hpp
 //  k-mer counter
 //
-//  Created by Daniel Dalquen on 31/03/2016.
+//  Class encapsulating the counter functionality. A counter object is always
+//  associated with an input file and can be used multiple times on the same
+//  file.
+//
+//  Depending on the k-mer length (k), either a trie is used, or the k-mers from
+//  the input file are hashed and then cached in temporary files. This reduces
+//  the memory requirement at the expense of disk space (about 8x the input
+//  size) and speed, but works for up to 27-mers.
+//
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
 
@@ -17,22 +25,22 @@
 
 
 class KmerCounter {
+public:
+  KmerCounter(std::string file_name);
+  ~KmerCounter();
+  KmerResultSet GetTopKmers(unsigned int top_N, unsigned int k);
+private:
   const long buffer_size = 1000000;
   char * buffer;
   std::ifstream in_file;
   KmerResultSet result_set;
-
-  void FillKmerTrie(unsigned long k, KmerTrie &trie);
-  void ComputeTopKmersUsingTrie(unsigned long n, unsigned long k);
-  void ComputeTopKmersUsingFiles(unsigned long n, unsigned long k);
+  
+  void ComputeTopKmersUsingFiles(unsigned int n, int k);
+  void ComputeTopKmersUsingTrie(unsigned int n, int k);
   void FillBuffer(long offset);
-  void WriteKmersToTempFiles(unsigned long k);
-public:
-  KmerCounter() {}
-  KmerCounter(std::string file_name);
-  ~KmerCounter();
-  KmerResultSet GetTopKmers(unsigned long top_N, unsigned long k);
+  void FillKmerTrie(int k, KmerTrie &trie);
   void reset();
+  void WriteKmersToTempFiles(int k);
 };
 
 #endif /* KmerCounter_hpp */

@@ -28,9 +28,13 @@ KmerCounter::~KmerCounter() {
   delete [] buffer;
 }
 
-KmerResultSet KmerCounter::GetTopKmers(unsigned long top_N, unsigned long k) {
+KmerResultSet KmerCounter::GetTopKmers(unsigned int top_N, unsigned int k) {
+  if (!in_file.good()) {
+    reset();
+  }
+  
   if (k <= 10) {
-//  if (true) {
+//  if (false) {
     ComputeTopKmersUsingTrie(top_N, k);
   } else {
     ComputeTopKmersUsingFiles(top_N, k);
@@ -38,20 +42,26 @@ KmerResultSet KmerCounter::GetTopKmers(unsigned long top_N, unsigned long k) {
   return result_set;
 }
 
-void KmerCounter::ComputeTopKmersUsingTrie(unsigned long top_N,
-                                           unsigned long k) {
+void KmerCounter::ComputeTopKmersUsingTrie(unsigned int top_N,
+                                           int k) {
   KmerTrie trie;
   FillKmerTrie(k, trie);
   result_set = trie.GetTopKmers(top_N,k);
 }
 
-void KmerCounter::FillKmerTrie(unsigned long k, KmerTrie &trie) {
-  
-  in_file.read(buffer, buffer_size);
-  if (in_file.gcount() < k) {
+void KmerCounter::FillKmerTrie(int k, KmerTrie &trie) {
+  unsigned long long file_length = GetFileLength(in_file);
+  if (file_length < k) {
     throw "input shorter than k-mer length ("+std::to_string(k)+").";
   }
-  unsigned long long i = buffer_size;
+  
+  std::cerr << "reading input file";
+  file_length -= k-1;
+  if (file_length < 10) {
+    file_length = 10;
+  }
+  in_file.read(buffer, buffer_size);
+  unsigned long long read = 0;
   while (in_file.gcount() > 0) {
     long end = in_file.gcount()-k+1;
     if (buffer[end+k-2] == '\n') {
@@ -60,35 +70,39 @@ void KmerCounter::FillKmerTrie(unsigned long k, KmerTrie &trie) {
 
     for (long i = 0; i < end; ++i) {
       trie.InsertKmer(buffer+i, k);
+
+      ++read;
+      if (!(read%(file_length/10))) {
+        std::cerr << "." << std::flush;
+      }
     }
     
     FillBuffer(-(k-1));
-    i += buffer_size;
-    if (!(i%10000000)) {
-      std::cerr << "." << std::flush;
-    }
   }
-  std::cerr << std::endl;
+  std::cerr << "\33[2K\r";
 }
-
 
 inline void KmerCounter::FillBuffer(long offset) {
   if (in_file.gcount() == buffer_size) {
-    in_file.seekg(offset, std::ios_base::cur);
+    in_file.seekg(offset, in_file.cur);
   }
   in_file.read(buffer, buffer_size);
 }
 
-void KmerCounter::ComputeTopKmersUsingFiles(unsigned long n, unsigned long k) {
+void KmerCounter::ComputeTopKmersUsingFiles(unsigned int n, int k) {
   
   WriteKmersToTempFiles(k);
   
   std::ifstream tmp_file;
-  unsigned long long read = 0;
   for (int fi = 0; fi < 25; ++fi) {
     std::cerr << "reading file " << fi << " ";
     tmp_file.open("tmp"+std::to_string(fi),
                        std::fstream::in | std::fstream::binary);
+    unsigned long long file_length = GetFileLength(tmp_file)/8;
+    if (file_length < 10) {
+      file_length = 10;
+    }
+    unsigned long long read = 0;
     
     std::vector<unsigned long long> kmers;
     unsigned long long hash;
@@ -96,11 +110,10 @@ void KmerCounter::ComputeTopKmersUsingFiles(unsigned long n, unsigned long k) {
       kmers.push_back(hash);
       
       ++read;
-      if (!(read%10000000)) {
+      if (!(read%(file_length/10))) {
         std::cerr << "*" << std::flush;
       }
     }
-    std::cerr << '\r';
     std::sort(kmers.begin(), kmers.end());
     
     for (auto lb = kmers.begin(), ub = kmers.begin(); lb != kmers.end();
@@ -118,27 +131,32 @@ void KmerCounter::ComputeTopKmersUsingFiles(unsigned long n, unsigned long k) {
       }
     }
     
+    std::cerr << "\33[2K\r";
     tmp_file.close();
     std::remove(("tmp"+std::to_string(fi)).c_str());
   }
   
 }
 
-void KmerCounter::WriteKmersToTempFiles(unsigned long k) {
-
+void KmerCounter::WriteKmersToTempFiles(int k) {
+  
+  unsigned long long file_length = GetFileLength(in_file);
+  if (file_length < k) {
+    throw "input shorter than k-mer length ("+std::to_string(k)+").";
+  }
+  file_length -= k-1;
+  
   std::ofstream tmp_files[25];
   for (int i = 0; i < 25; ++i) {
     tmp_files[i].open("tmp"+std::to_string(i),
                       std::ofstream::out | std::ofstream::binary);
   }
   
+  std::cerr << "reading input file";
+
   in_file.read(buffer, buffer_size);
   
-  if (in_file.gcount() < k) {
-    throw "input shorter than k-mer length ("+std::to_string(k)+").";
-  }
-  
-  unsigned long long i = buffer_size;
+  unsigned long long read = 0;
   while (in_file.gcount() > 0) {
     long end = in_file.gcount()-k+1;
     if (buffer[end+k-2] == '\n') {
@@ -149,15 +167,15 @@ void KmerCounter::WriteKmersToTempFiles(unsigned long k) {
       unsigned long long hash = ComputeHash(buffer+i+2, k-2);
       tmp_files[ComputeHash(buffer+i,2)].write((char *) &hash,
                                                sizeof(unsigned long long));
+      ++read;
+      if (!(read%(file_length/10))) {
+        std::cerr << "." << std::flush;
+      }
     }
     
     FillBuffer(-(k-1));
-    i += buffer_size;
-    if (!(i%10000000)) {
-      std::cerr << "." << std::flush;
-    }
   }
-  std::cerr << std::endl;
+  std::cerr << "\33[2K\r";
   
   for (int i = 0; i < 25; ++i) {
     tmp_files[i].close();
@@ -166,7 +184,7 @@ void KmerCounter::WriteKmersToTempFiles(unsigned long k) {
 }
 
 void KmerCounter::reset() {
-  in_file.seekg(0, std::ios_base::beg);
   in_file.clear();
+  in_file.seekg(0, in_file.beg);
   result_set.clear();
 }

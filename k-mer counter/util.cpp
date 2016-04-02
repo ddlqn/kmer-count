@@ -2,7 +2,6 @@
 //  tools.cpp
 //  k-mer counter
 //
-//  Created by Daniel Dalquen on 29/03/2016.
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
 
@@ -13,7 +12,7 @@
 #include "util.hpp"
 
 
-unsigned long long ComputeHash(char * kmer, long k) {
+unsigned long long ComputeHash(const char * kmer, int k) {
   unsigned long long hash = 0;
   for (int i = 0; i < k; ++i) {
     hash *= 5;
@@ -22,7 +21,7 @@ unsigned long long ComputeHash(char * kmer, long k) {
   return hash;
 }
 
-std::string ComputeKmerFromHash(unsigned long long hash, long k) {
+std::string ComputeKmerFromHash(unsigned long long hash, int k) {
   std::string kmer;
   for (int i = 0; i < k; i++) {
     kmer.push_back(IndexToBase(hash%5));
@@ -75,3 +74,5 @@ bool operator>(const KmerResult& r1, const KmerResult& r2) {
   return r1.second > r2.second ||
   (r1.second == r2.second && r1.first < r2.first);
 }
+
+

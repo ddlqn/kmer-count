@@ -2,12 +2,13 @@
 //  tools.hpp
 //  k-mer counter
 //
+//  A number of utility functions and definitions
 //  
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
 
-#ifndef tools_hpp
-#define tools_hpp
+#ifndef util_hpp
+#define util_hpp
 
 #include <fstream>
 #include <set>
@@ -27,9 +28,22 @@ struct KmerResultCompare {
 
 bool operator>(const KmerResult& r1, const KmerResult& r2);
 
-unsigned long long ComputeHash(char * kmer, long k);
-std::string ComputeKmerFromHash(unsigned long long hash, long k);
+unsigned long long ComputeHash(const char * kmer, int k);
+std::string ComputeKmerFromHash(unsigned long long hash, int k);
+
 int BaseToIndex(char c);
 char IndexToBase(int i);
 
-#endif /* tools_hpp */
+inline unsigned long long GetFileLength(std::ifstream &file) {
+  std::streampos cur_pos = file.tellg();
+  file.seekg(-1, file.end);
+  unsigned long long file_length = file.tellg();
+  if (file.peek() != '\n') {
+    ++file_length;
+  }
+  file.seekg(cur_pos);
+  return file_length;
+}
+
+
+#endif /* util_hpp */

@@ -26,6 +26,7 @@ main.o: main.cpp
 test.o: test.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<
 
+.PHONY: clean
 clean:
 	rm -r *.o test count deps.mk
 
