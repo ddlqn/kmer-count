@@ -10,8 +10,6 @@ if seq[-1] == '\n':
 
 kmers = []
 for i in range(len(seq)-(k-1)):
-  if not (i%((len(seq)-(k-1))/10)):
-    print "."
   curKmer = seq[i:i+k]
   kmers.append(curKmer)
 fin.close()
