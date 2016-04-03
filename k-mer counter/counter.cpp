@@ -6,6 +6,7 @@
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
 //
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include "counter.hpp"
