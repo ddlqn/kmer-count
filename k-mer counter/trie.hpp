@@ -18,7 +18,6 @@
 #include <array>
 #include <string>
 #include <set>
-#include "buffer.hpp"
 #include "util.hpp"
 
 class KmerTrie {
