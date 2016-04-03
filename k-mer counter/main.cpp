@@ -2,8 +2,8 @@
 //  main.cpp
 //  k-mer counter
 //
-//  main function of k-mer counter. Parses commandline arguments and then
-//  creates a KmerCounter object that does the actual work. Finally, prints
+//  main function of k-mer counter. Parses command line arguments and then
+//  creates a KmerCounter object that processes the data. Finally, prints
 //  the results.
 //
 //  Copyright © 2016 Daniel Dalquen. All rights reserved.
@@ -30,8 +30,8 @@ int main(int argc, const char * argv[]) {
     std::cerr << "value(s) for num_kmers and/or kmer_length are invalid"
               << std::endl;
     return -1;
-  } else if (k > 27) {
-    std::cerr << "this program only works reliably up to k-mer length 27"
+  } else if (k > 29) {
+    std::cerr << "this program only works reliably up to k-mer length 29"
               << std::endl;
   }
 

@@ -11,7 +11,8 @@
 #include <vector>
 #include "util.hpp"
 
-
+// Encodes a k-mer as a value of base 5. This ensures no collisions up to k = 27
+// and makes the hash reversible.
 unsigned long long ComputeHash(const char * kmer, int k) {
   unsigned long long hash = 0;
   for (int i = 0; i < k; ++i) {
@@ -21,6 +22,7 @@ unsigned long long ComputeHash(const char * kmer, int k) {
   return hash;
 }
 
+// Creates a string from an encoded kmer
 std::string ComputeKmerFromHash(unsigned long long hash, int k) {
   std::string kmer;
   for (int i = 0; i < k; i++) {

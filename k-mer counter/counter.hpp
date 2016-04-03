@@ -28,17 +28,20 @@ class KmerCounter {
 public:
   KmerCounter(std::string file_name);
   ~KmerCounter();
-  KmerResultSet GetTopKmers(unsigned int top_N, unsigned int k);
+  KmerResultSet GetTopKmers(unsigned int top_N, int k);
 private:
-  const long buffer_size = 1000000;
+  static const long buffer_size = 1000000;
+  // We create a file for every prefix of size 2:
+  static const int number_of_files = 25;
   char * buffer;
   std::ifstream in_file;
   KmerResultSet result_set;
   
-  void ComputeTopKmersUsingFiles(unsigned int n, int k);
-  void ComputeTopKmersUsingTrie(unsigned int n, int k);
+  void ComputeTopKmersUsingFiles(unsigned int top_N, int k);
+  void ComputeTopKmersUsingTrie(unsigned int top_N, int k);
   void FillBuffer(long offset);
   void FillKmerTrie(int k, KmerTrie &trie);
+  void ReadTempFile(int file_index, unsigned int top_N, int k);
   void reset();
   void WriteKmersToTempFiles(int k);
 };

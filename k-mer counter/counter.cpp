@@ -28,13 +28,12 @@ KmerCounter::~KmerCounter() {
   delete [] buffer;
 }
 
-KmerResultSet KmerCounter::GetTopKmers(unsigned int top_N, unsigned int k) {
+KmerResultSet KmerCounter::GetTopKmers(unsigned int top_N, int k) {
   if (!in_file.good()) {
     reset();
   }
   
   if (k <= 10) {
-//  if (false) {
     ComputeTopKmersUsingTrie(top_N, k);
   } else {
     ComputeTopKmersUsingFiles(top_N, k);
@@ -89,51 +88,13 @@ inline void KmerCounter::FillBuffer(long offset) {
   in_file.read(buffer, buffer_size);
 }
 
-void KmerCounter::ComputeTopKmersUsingFiles(unsigned int n, int k) {
+void KmerCounter::ComputeTopKmersUsingFiles(unsigned int top_N, int k) {
   
   WriteKmersToTempFiles(k);
   
-  std::ifstream tmp_file;
-  for (int fi = 0; fi < 25; ++fi) {
-    std::cerr << "reading file " << fi << " ";
-    tmp_file.open("tmp"+std::to_string(fi),
-                       std::fstream::in | std::fstream::binary);
-    unsigned long long file_length = GetFileLength(tmp_file)/8;
-    if (file_length < 10) {
-      file_length = 10;
-    }
-    unsigned long long read = 0;
-    
-    std::vector<unsigned long long> kmers;
-    unsigned long long hash;
-    while (tmp_file.read((char *)&hash, sizeof(unsigned long long))) {
-      kmers.push_back(hash);
-      
-      ++read;
-      if (!(read%(file_length/10))) {
-        std::cerr << "*" << std::flush;
-      }
-    }
-    std::sort(kmers.begin(), kmers.end());
-    
-    for (auto lb = kmers.begin(), ub = kmers.begin(); lb != kmers.end();
-         lb = ub) {
-      ub = std::upper_bound(lb, kmers.end(), *lb);
-      KmerResult kmer_result(ComputeKmerFromHash(fi,2)
-                             +ComputeKmerFromHash(*lb, k-2),
-                             ub-lb);
-      
-      if (result_set.size() < n) {
-        result_set.insert(kmer_result);
-      } else if (kmer_result > *(result_set.rbegin())) {
-        result_set.erase(*(result_set.rbegin()));
-        result_set.insert(kmer_result);
-      }
-    }
-    
-    std::cerr << "\33[2K\r";
-    tmp_file.close();
-    std::remove(("tmp"+std::to_string(fi)).c_str());
+  for (int file_index = 0; file_index < number_of_files; ++file_index) {
+    ReadTempFile(file_index, top_N, k);
+    std::remove(("tmp"+std::to_string(file_index)).c_str());
   }
   
 }
@@ -146,8 +107,8 @@ void KmerCounter::WriteKmersToTempFiles(int k) {
   }
   file_length -= k-1;
   
-  std::ofstream tmp_files[25];
-  for (int i = 0; i < 25; ++i) {
+  std::ofstream tmp_files[number_of_files];
+  for (int i = 0; i < number_of_files; ++i) {
     tmp_files[i].open("tmp"+std::to_string(i),
                       std::ofstream::out | std::ofstream::binary);
   }
@@ -177,10 +138,56 @@ void KmerCounter::WriteKmersToTempFiles(int k) {
   }
   std::cerr << "\33[2K\r";
   
-  for (int i = 0; i < 25; ++i) {
+  for (int i = 0; i < number_of_files; ++i) {
     tmp_files[i].close();
   }
 
+}
+
+void KmerCounter::ReadTempFile(int file_index, unsigned int top_N, int k) {
+  std::ifstream tmp_file;
+
+  std::cerr << "reading file " << file_index << " ";
+  tmp_file.open("tmp"+std::to_string(file_index),
+                std::fstream::in | std::fstream::binary);
+  
+  // We want to give some indication of progess every 10%
+  unsigned long long status_update =
+    GetFileLength(tmp_file)/sizeof(unsigned long long);
+  status_update = (status_update < 10 ? 1 : status_update/10);
+  unsigned long long read = 0;
+  
+  std::vector<unsigned long long> kmers;
+  unsigned long long hash;
+  while (tmp_file.read((char *)&hash, sizeof(unsigned long long))) {
+    kmers.push_back(hash);
+    
+    ++read;
+    if (!(read%status_update)) {
+      std::cerr << "*" << std::flush;
+    }
+  }
+  std::sort(kmers.begin(), kmers.end());
+  
+  for (
+       auto lower_bound = kmers.begin(), upper_bound = kmers.begin();
+       lower_bound != kmers.end();
+       lower_bound = upper_bound) {
+    upper_bound = std::upper_bound(lower_bound, kmers.end(), *lower_bound);
+    KmerResult kmer_result(ComputeKmerFromHash(file_index,2)
+                           +ComputeKmerFromHash(*lower_bound, k-2),
+                           upper_bound-lower_bound);
+    
+    if (result_set.size() < top_N) {
+      result_set.insert(kmer_result);
+    } else if (kmer_result > *(result_set.rbegin())) {
+      result_set.erase(*(result_set.rbegin()));
+      result_set.insert(kmer_result);
+    }
+  }
+  
+  std::cerr << "\33[2K\r";
+  tmp_file.close();
 }
 
 void KmerCounter::reset() {

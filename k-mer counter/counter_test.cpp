@@ -10,6 +10,17 @@
 #include "catch.hpp"
 #include "counter.hpp"
 
+void LoadExpectedResultSet(std::string file_name,
+                                    KmerResultSet &result_set) {
+  std::ifstream in_file(file_name);
+  std::string kmer;
+  int count;
+  while (in_file >> kmer >> count) {
+    result_set.insert(KmerResult(kmer, count));
+  }
+  in_file.close();
+}
+
 TEST_CASE("test KmerCounter class", "[KmerCounter]") {
   REQUIRE_THROWS(KmerCounter c("inexistent_file.txt"));
   
@@ -59,5 +70,31 @@ TEST_CASE("test KmerCounter class", "[KmerCounter]") {
     ++i;
   }
   
+  KmerResultSet exp_kmers3;
+  LoadExpectedResultSet("test_data/big_out_3.txt", exp_kmers3);
+  KmerCounter counter3("test_data/big.txt");
+  result_set = counter3.GetTopKmers(125, 3);
+  
+  REQUIRE(result_set.size() == exp_kmers3.size());
+  
+  for (auto it_res = result_set.begin(), it_exp = exp_kmers3.begin();
+       it_res != result_set.end();
+       ++it_res, ++it_exp) {
+    REQUIRE((*it_res).first == (*it_exp).first);
+    REQUIRE((*it_res).second == (*it_exp).second);
+  }
+  
+  exp_kmers3.clear();
+  LoadExpectedResultSet("test_data/big_out_12.txt", exp_kmers3);
+  result_set = counter3.GetTopKmers(244140625, 12);
+  
+  REQUIRE(result_set.size() == exp_kmers3.size());
 
+  for (auto it_res = result_set.begin(), it_exp = exp_kmers3.begin();
+       it_res != result_set.end();
+       ++it_res, ++it_exp) {
+    REQUIRE((*it_res).first == (*it_exp).first);
+    REQUIRE((*it_res).second == (*it_exp).second);
+  }
+  
 }

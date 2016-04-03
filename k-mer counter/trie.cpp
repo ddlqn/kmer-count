@@ -65,7 +65,8 @@ KmerResultSet KmerTrie::GetAllKmers(int k) {
   return result_set;
 }
 
-void KmerTrie::GetTopKmers(long long int n, int k,
+void KmerTrie::GetTopKmers(long long int n,
+                           int k,
                            KmerResultSet &result_set,
                            std::string &prefix) {
   if (prefix.length() == k) {
