@@ -25,7 +25,9 @@ different approaches are used, depending on k:
     k-mers are counted.
 
 In both cases, only the N most common k-mers are kept during the counting
-phase.
+phase. If there are multiple k-mers with the same count, they are ordered
+lexicographically. In case the N-th and (N+1)-th k-mers have the same count,
+only the N-th k-mer is reported.
 
 
 Building
